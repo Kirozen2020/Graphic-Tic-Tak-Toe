@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using TicTakToe_Graphics.Properties;
 
@@ -11,12 +10,14 @@ namespace TicTakToe_Graphics
         List<PictureBox> pictureBoxes;
         char[] board;
         bool turn;
+        bool ai;
         public Form1()
         {
             InitializeComponent();
             InitListOfPictureBoxes();
             InitBoard();
             this.turn = true;
+            this.ai = false;
         }
 
         private void InitBoard()
@@ -47,45 +48,93 @@ namespace TicTakToe_Graphics
 
         private void PictureBox_Click(object sender, EventArgs e)
         {
-            PictureBox clicked = (PictureBox)sender;
-            if (this.board[(int)clicked.Tag] != ' ')
+            if (!this.ai)
             {
-                bool full = true;
-                foreach (var item in this.board)
+                PictureBox clicked = (PictureBox)sender;
+                if (this.board[(int)clicked.Tag] != ' ')
                 {
-                    if(item == ' ')
+                    bool full = true;
+                    foreach (var item in this.board)
                     {
-                        full = false;
+                        if (item == ' ')
+                        {
+                            full = false;
+                        }
                     }
+                    if (full)
+                    {
+                        MessageBox.Show("You've run out of moves. Please restart the game.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    return;
                 }
-                if (full)
+                if (this.turn)
                 {
-                    MessageBox.Show("You've run out of moves. Please restart the game.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    clicked.Image = Resources.X;
+                    this.turn = !this.turn;
+                    this.board[(int)clicked.Tag] = 'X';
                 }
-                return;
-            }
-            if (this.turn)
-            {
-                clicked.Image = Resources.X;
-                this.turn = !this.turn;
-                this.board[(int)clicked.Tag] = 'X';
-            }
-            else
-            {
-                clicked.Image = Resources.O;
-                this.turn = !this.turn;
-                this.board[(int)clicked.Tag] = 'O';
-            }
+                else
+                {
+                    clicked.Image = Resources.O;
+                    this.turn = !this.turn;
+                    this.board[(int)clicked.Tag] = 'O';
+                }
 
-            char win = CheckWinSituation();
-            if(win != ' ')
-            {
-                foreach (var item in this.pictureBoxes)
+                char win = CheckWinSituation();
+                if (win != ' ')
                 {
-                    item.Enabled = false;
+                    foreach (var item in this.pictureBoxes)
+                    {
+                        item.Enabled = false;
+                    }
+                    MessageBox.Show($"The player {win} won!", "We have a winner!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("To proceed, please press the restart button.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                MessageBox.Show($"The player {win} won!", "We have a winner!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                MessageBox.Show("To proceed, please press the restart button.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else//player first
+            {
+                PictureBox clicked = (PictureBox)sender;
+                if (this.board[(int)clicked.Tag] != ' ')
+                {
+                    bool full = true;
+                    foreach (var item in this.board)
+                    {
+                        if (item == ' ')
+                        {
+                            full = false;
+                        }
+                    }
+                    if (full)
+                    {
+                        MessageBox.Show("You've run out of moves. Please restart the game.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    return;
+                }
+                clicked.Image = Resources.X;
+                this.board[(int)clicked.Tag] = 'X';
+
+                TicTakToe_Bot bot = new TicTakToe_Bot();
+                this.board = bot.GetBestNextMove(this.board, 'O');
+                UpdateBoard();
+                char win = CheckWinSituation();
+                if (win != ' ')
+                {
+                    foreach (var item in this.pictureBoxes)
+                    {
+                        item.Enabled = false;
+                    }
+                    if(win == 'X')
+                    {
+                        MessageBox.Show("You Have won the game!", "We have a winner!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("To proceed, please press the restart button.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The bot has Won the game", "We have a winner!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("To proceed, please press the restart button.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    
+                }
             }
         }
 
@@ -102,26 +151,6 @@ namespace TicTakToe_Graphics
                 this.board[i] = ' ';
             }
         }
-        /*
-        private char CheckWinSituation()
-        {
-            char winner = ' ';
-            char[] brd = this.board;
-
-            if (brd[0] == brd[1] && brd[0] == brd[2] && brd[0] != ' ') { winner = brd[0]; }
-            if (brd[3] == brd[4] && brd[3] == brd[5] && brd[3] != ' ') { winner = brd[3]; }
-            if (brd[6] == brd[7] && brd[6] == brd[8] && brd[6] != ' ') { winner = brd[6]; }
-
-            if (brd[0] == brd[3] && brd[0] == brd[6] && brd[0] != ' ') { winner = brd[0]; }
-            if (brd[1] == brd[4] && brd[1] == brd[7] && brd[1] != ' ') { winner = brd[1]; }
-            if (brd[2] == brd[5] && brd[2] == brd[8] && brd[2] != ' ') { winner = brd[2]; }
-
-            if (brd[0] == brd[4] && brd[0] == brd[8] && brd[0] != ' ') { winner = brd[0]; }
-            if (brd[2] == brd[4] && brd[2] == brd[6] && brd[2] != ' ') { winner = brd[2]; }
-
-            return winner;
-        }
-        */
         private char CheckWinSituation()
         {
             char winner = ' ';
@@ -152,5 +181,40 @@ namespace TicTakToe_Graphics
             return winner;
         }
 
+        private void UpdateBoard()
+        {
+            for (int i = 0; i < this.board.Length; i++)
+            {
+                switch (this.board[i])
+                {
+                    case 'X':
+                        pictureBoxes[i].Image = Resources.X;
+                        break;
+                    case 'O':
+                        pictureBoxes[i].Image = Resources.O;
+                        break;
+                    case ' ':
+                        pictureBoxes[i].Image = null;
+                        break;
+                }
+            }
+        }
+
+        private void cbBot_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ai = cbBot.Checked;
+            //restart game for changing bot status
+            
+            this.turn = true;
+            foreach (PictureBox pictureBox in pictureBoxes)
+            {
+                pictureBox.Image = null;
+                pictureBox.Enabled = true;
+            }
+            for (int i = 0; i < this.board.Length; i++)
+            {
+                this.board[i] = ' ';
+            }
+        }
     }
 }

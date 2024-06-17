@@ -43,6 +43,7 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.cbBot = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pb1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb9)).BeginInit();
@@ -151,7 +152,7 @@
             // btnRestart
             // 
             this.btnRestart.Font = new System.Drawing.Font("Stencil", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRestart.Location = new System.Drawing.Point(92, 364);
+            this.btnRestart.Location = new System.Drawing.Point(89, 372);
             this.btnRestart.Name = "btnRestart";
             this.btnRestart.Size = new System.Drawing.Size(159, 42);
             this.btnRestart.TabIndex = 9;
@@ -195,11 +196,23 @@
             this.pictureBox4.TabIndex = 13;
             this.pictureBox4.TabStop = false;
             // 
+            // cbBot
+            // 
+            this.cbBot.AutoSize = true;
+            this.cbBot.Location = new System.Drawing.Point(25, 347);
+            this.cbBot.Name = "cbBot";
+            this.cbBot.Size = new System.Drawing.Size(79, 17);
+            this.cbBot.TabIndex = 14;
+            this.cbBot.Text = "Unable Bot";
+            this.cbBot.UseVisualStyleBackColor = true;
+            this.cbBot.CheckedChanged += new System.EventHandler(this.cbBot_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(356, 439);
+            this.Controls.Add(this.cbBot);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
@@ -230,6 +243,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -249,6 +263,7 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.CheckBox cbBot;
     }
 }
 
